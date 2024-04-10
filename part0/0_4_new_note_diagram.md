@@ -36,4 +36,6 @@
     deactivate server
 
     Note right of browser: The browser executes the callback function that renders the notes
+
+    browser->>user: List of notes is rendered and visible to user
 ```
