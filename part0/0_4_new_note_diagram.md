@@ -8,7 +8,11 @@
     user->>browser: writes new note "Hello"
     Note over browser: Browser displays "Hello" in text field
     user->>browser: presses "Save" button
-    Note over browser: TO BE CONTINUED 
+    Note over browser: The Browser sends the user's new note to the server
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
+    Note right of browser: The note "Hello" is sent as body of the POST request
+    server-->>browser: Responds status 302
+    Note over browser: Browser is redirected to endpoint /notes
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
     activate server
     server-->>browser: HTML document
@@ -24,11 +28,11 @@
     server-->>browser: the JavaScript file
     deactivate server
 
-    Note right of browser: The browser starts executing the JavaScript code that fetches the JSON from the server
-
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
     activate server
-    server-->>browser: [{ "content": "HTML is easy", "date": "2023-1-1" }, ... ]
+    Note right of browser: The raw data in JSON format is fetched according to JS code executed in browser
+
+    server-->>browser: [{content: "Hello", date: "2024-04-10T18:19:03.874Z"}, ... ]
     deactivate server
 
     Note right of browser: The browser executes the callback function that renders the notes
