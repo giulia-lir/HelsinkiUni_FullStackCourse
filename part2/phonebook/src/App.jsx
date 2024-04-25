@@ -3,12 +3,29 @@ import { useState } from 'react'
 const App = () => {
   const [persons, setPersons] = useState([
     { 
+      id: 1,
       name: 'Arto Hellas',
       phone: '04599746985',
+    },
+    {
+      id: 2,
+      name: 'Essi Esimerkki',
+      phone: '04923984203',
+    },
+    {
+      id: 3,
+      name: 'Noora Malli',
+      phone: '83094280343'
+    },
+    {
+      id: 4,
+      name: 'Timo Tottakai',
+      phone: '9039824093'
     }
   ]) 
 
-  const [newPerson, setNewPerson] = useState({ name: '', phone: '' })
+  const [newPerson, setNewPerson] = useState({ id: null, name: '', phone: '' })
+  const [searchInput, setSearchInput] = useState('')
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -22,17 +39,28 @@ const App = () => {
 
     if (isDuplicate) {
       alert(`${newPerson.name} is already added to phonebook.`);
-      setNewPerson({ name: '', phone: '' });
+      setNewPerson({ id: null, name: '', phone: '' });
       return;
     }
 
-    setPersons([...persons, newPerson]);
-    setNewPerson({ name: '', phone: '' });
+    const maxId = persons.reduce((max, person) => (person.id > max ? person.id : max), 0);
+    const newId = maxId + 1;
+
+    const newPersonWithId = { ...newPerson, id: newId };
+
+    setPersons([...persons, newPersonWithId]);
+    setNewPerson({ id: null, name: '', phone: '' });
   };
 
+  const handleSearchInput = (event) => {
+    console.log(event.target.value)
+  }
+  console.log(persons)
   return (
     <div>
       <h2>Phonebook</h2>
+      filter shown with <input onChange={handleSearchInput} />
+      <h2>add a new</h2>
       <form onSubmit={addNewNumber}>
         <div>
         name: <input name="name" value={newPerson.name} onChange={handleInputChange} />
@@ -45,7 +73,7 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      <div>{persons.map(person => <div key={person.name}>{person.name} {person.phone}</div>)}</div>
+      <div>{persons.map(person => <div key={person.id}>{person.name} {person.phone}</div>)}</div>
     </div>
   )
 }
