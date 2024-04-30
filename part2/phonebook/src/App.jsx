@@ -53,9 +53,13 @@ const App = () => {
   };
 
   const handleSearchInput = (event) => {
-    console.log(event.target.value)
+    setSearchInput(event.target.value)
   }
-  console.log(persons)
+
+  const filteredPersons = persons.filter(person =>
+    person.name.toLowerCase().includes(searchInput.toLowerCase())
+  );
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -73,7 +77,13 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      <div>{persons.map(person => <div key={person.id}>{person.name} {person.phone}</div>)}</div>
+      <div>
+        {filteredPersons.map(person => (
+            <div key={person.id}>
+              {person.name} {person.phone}
+            </div>
+          ))}
+      </div>
     </div>
   )
 }
