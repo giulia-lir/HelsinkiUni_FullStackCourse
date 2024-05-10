@@ -1,34 +1,24 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 import Title from './components/Title'
 import Search from './components/Search'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { 
-      id: 1,
-      name: 'Arto Hellas',
-      phone: '04599746985',
-    },
-    {
-      id: 2,
-      name: 'Essi Esimerkki',
-      phone: '04923984203',
-    },
-    {
-      id: 3,
-      name: 'Noora Malli',
-      phone: '83094280343'
-    },
-    {
-      id: 4,
-      name: 'Timo Tottakai',
-      phone: '9039824093'
-    }
-  ]) 
+  const [persons, setPersons] = useState([])
 
-  const [newPerson, setNewPerson] = useState({ id: null, name: '', phone: '' })
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }, [])
+
+  const [newPerson, setNewPerson] = useState({ id: null, name: '', number: '' })
   const [searchInput, setSearchInput] = useState('')
 
   const handleInputChange = (event) => {
@@ -43,7 +33,7 @@ const App = () => {
 
     if (isDuplicate) {
       alert(`${newPerson.name} is already added to phonebook.`);
-      setNewPerson({ id: null, name: '', phone: '' });
+      setNewPerson({ id: null, name: '', number: '' });
       return;
     }
 
@@ -53,7 +43,7 @@ const App = () => {
     const newPersonWithId = { ...newPerson, id: newId };
 
     setPersons([...persons, newPersonWithId]);
-    setNewPerson({ id: null, name: '', phone: '' });
+    setNewPerson({ id: null, name: '', number: '' });
   };
 
   const handleSearchInput = (event) => {
