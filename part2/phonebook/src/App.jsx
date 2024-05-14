@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import PersonService from './services/PersonsService'
 import Title from './components/Title'
 import Search from './components/Search'
 import PersonForm from './components/PersonForm'
@@ -9,12 +9,10 @@ const App = () => {
   const [persons, setPersons] = useState([])
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+    PersonService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
@@ -42,7 +40,11 @@ const App = () => {
 
     const newPersonWithId = { ...newPerson, id: newId };
 
-    setPersons([...persons, newPersonWithId]);
+    PersonService
+      .add(newPersonWithId)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+      })
     setNewPerson({ id: null, name: '', number: '' });
   };
 
