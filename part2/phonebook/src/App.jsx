@@ -48,10 +48,12 @@ const App = () => {
     setNewPerson({ id: '', name: '', number: '' });
   };
 
-  const removePerson = ( id ) => {
-    PersonService
-      .remove(id)
-      .then(() => setPersons(persons.filter(person => person.id !== id)))
+  const removePerson = ( id, name ) => {
+    if (window.confirm(`Delete ${name} ?`)) {
+      PersonService
+        .remove(id)
+        .then(() => setPersons(persons.filter(person => person.id !== id)))
+    }
   }
 
   const handleSearchInput = (event) => {
