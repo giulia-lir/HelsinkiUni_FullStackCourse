@@ -27,25 +27,38 @@ const App = () => {
   const addNewNumber = (event) => {
     event.preventDefault();
 
-    const isDuplicate = persons.some(person => person.name === newPerson.name);
+    const isDuplicate = persons.find(person => person.name === newPerson.name);
 
     if (isDuplicate) {
-      alert(`${newPerson.name} is already added to phonebook.`);
+      const confirmUpdate = window.confirm(`${newPerson.name} is already added to phonebook, replace the old number with a new one?`);
+      if (confirmUpdate) {
+        const updatedPerson = { ...isDuplicate, number: newPerson.number };
+  
+        PersonService
+          .update(isDuplicate.id, updatedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(person =>
+              person.id === returnedPerson.id ? returnedPerson : person
+            ));
+          })
+          .catch(error => {
+            console.error('Error updating person:', error);
+          });
+      }
       setNewPerson({ id: '', name: '', number: '' });
-      return;
+    } else {
+      const maxId = persons.reduce((max, person) => (parseInt(person.id) > max ? parseInt(person.id) : max), 0);
+      const newId = maxId + 1;
+  
+      const newPersonWithId = { ...newPerson, id: newId.toString() };
+  
+      PersonService
+        .add(newPersonWithId)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+        })
+      setNewPerson({ id: '', name: '', number: '' });
     }
-
-    const maxId = persons.reduce((max, person) => (parseInt(person.id) > max ? parseInt(person.id) : max), 0);
-    const newId = maxId + 1;
-
-    const newPersonWithId = { ...newPerson, id: newId.toString() };
-
-    PersonService
-      .add(newPersonWithId)
-      .then(returnedPerson => {
-        setPersons(persons.concat(returnedPerson))
-      })
-    setNewPerson({ id: '', name: '', number: '' });
   };
 
   const removePerson = ( id, name ) => {
