@@ -16,7 +16,7 @@ const App = () => {
       })
   }, [])
 
-  const [newPerson, setNewPerson] = useState({ id: null, name: '', number: '' })
+  const [newPerson, setNewPerson] = useState({ id: '', name: '', number: '' })
   const [searchInput, setSearchInput] = useState('')
 
   const handleInputChange = (event) => {
@@ -31,22 +31,28 @@ const App = () => {
 
     if (isDuplicate) {
       alert(`${newPerson.name} is already added to phonebook.`);
-      setNewPerson({ id: null, name: '', number: '' });
+      setNewPerson({ id: '', name: '', number: '' });
       return;
     }
 
-    const maxId = persons.reduce((max, person) => (person.id > max ? person.id : max), 0);
+    const maxId = persons.reduce((max, person) => (parseInt(person.id) > max ? parseInt(person.id) : max), 0);
     const newId = maxId + 1;
 
-    const newPersonWithId = { ...newPerson, id: newId };
+    const newPersonWithId = { ...newPerson, id: newId.toString() };
 
     PersonService
       .add(newPersonWithId)
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
       })
-    setNewPerson({ id: null, name: '', number: '' });
+    setNewPerson({ id: '', name: '', number: '' });
   };
+
+  const removePerson = ( id ) => {
+    PersonService
+      .remove(id)
+      .then(() => setPersons(persons.filter(person => person.id !== id)))
+  }
 
   const handleSearchInput = (event) => {
     setSearchInput(event.target.value)
@@ -69,7 +75,10 @@ const App = () => {
       />
 
       <Title text={'Numbers'} />
-      <Persons filteredPersons={filteredPersons} />
+      <Persons
+        filteredPersons={filteredPersons}
+        removePerson={removePerson}
+      />
     </div>
   )
 }
